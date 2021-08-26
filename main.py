@@ -5,7 +5,9 @@ from config import *
 
 def main(host, port):
     db_session.global_init("database.sqlite")
-    app.add_url_rule("/api/v1/get_object/<int:object_id>", api.v1.get_object)
+    app.add_url_rule(rule="/api/v1/get_object", view_func=api.v1.get_object)
+    app.add_url_rule(rule="/api/v1/get_objectgroup", view_func=api.v1.get_object_group)
+    app.add_url_rule(rule="/api/v1/new_object", view_func=api.v1.new_object)
     app.run(host=host, port=port)
 
 
