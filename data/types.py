@@ -19,9 +19,9 @@ class ObjectGroup(SqlAlchemyBase):
 
 
 class Field:
-    def __init__(self, field_type: str, name: str, data):
-        self.field_type = field_type
+    def __init__(self, name: str, data_type: str, data: bytes):
         self.name = name
+        self.data_type = data_type
         self.data = data
 
 
