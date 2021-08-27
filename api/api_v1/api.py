@@ -72,7 +72,7 @@ def new_object_group():
     token = request.args.get('token')
     name = request.args.get('name')
     description = request.args.get('description')
-    objects = request.args.get('objects')
+    objects = request.args.get('objects_id')
     if token not in TOKENS:
         return make_response(jsonify({'error': 'Token invalid'}), 401)
     if not name:
@@ -124,6 +124,38 @@ def set_object(object_id=None):
     obj_id = obj.id
     session.close()
     return get_object(obj_id)
+
+
+def set_object_group(group_id=None):
+    if not group_id:
+        try:
+            group_id = int(request.args.get('id'))
+        except Exception:
+            return make_response(jsonify({'error': 'Name invalid'}), 400)
+    token = request.args.get('token')
+    name = request.args.get('name')
+    description = request.args.get('description')
+    objects = request.args.get('objects_id')
+    if token not in TOKENS:
+        return make_response(jsonify({'error': 'Token invalid'}), 401)
+    if not name:
+        return make_response(jsonify({'error': 'Name invalid'}), 400)
+    try:
+        objects = loads(objects)
+    except Exception:
+        return make_response(jsonify({'error': 'Objects list invalid'}), 400)
+    session = create_session()
+    obj_group = session.query(ObjectGroup).get(group_id)
+    if not obj_group:
+        session.close()
+        return make_response(jsonify({'error': 'Not found'}), 404)
+    obj_group.name = name
+    obj_group.description = description
+    obj_group.objects_id = objects
+    session.commit()
+    obj_group_id = obj_group.id
+    session.close()
+    return get_object_group(obj_group_id)
 
 
 def __field_to_json(field: Field) -> dict:
