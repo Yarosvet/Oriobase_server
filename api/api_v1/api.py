@@ -90,6 +90,42 @@ def new_object_group():
     return get_object_group(obj_group_id)
 
 
+def set_object(object_id=None):
+    if not object_id:
+        try:
+            object_id = int(request.args.get('id'))
+        except Exception:
+            return make_response(jsonify({'error': 'Id invalid'}), 400)
+    token = request.args.get('token')
+    name = request.args.get('name')
+    fields = request.args.get('fields')
+    relations = request.args.get('relations')
+    if token not in TOKENS:
+        return make_response(jsonify({'error': 'Token invalid'}), 401)
+    if not name:
+        return make_response(jsonify({'error': 'Name invalid'}), 400)
+    try:
+        obj_fields = __fields_from_json(fields)
+    except Exception:
+        return make_response(jsonify({'error': 'Fields invalid'}), 400)
+    try:
+        obj_relations = __relations_from_json(relations)
+    except Exception:
+        return make_response(jsonify({'error': 'Fields invalid'}), 400)
+    session = create_session()
+    obj = session.query(Object).get(object_id)
+    if not obj:
+        session.close()
+        return make_response(jsonify({'error': 'Not found'}), 404)
+    obj.name = name
+    obj.fields = obj_fields
+    obj.relations = obj_relations
+    session.commit()
+    obj_id = obj.id
+    session.close()
+    return get_object(obj_id)
+
+
 def __field_to_json(field: Field) -> dict:
     return {"name": field.name,
             "data_type": field.data_type,

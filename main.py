@@ -9,6 +9,7 @@ def main(host, port):
     app.add_url_rule(rule="/api/v1/get_objectgroup", view_func=api.v1.get_object_group)
     app.add_url_rule(rule="/api/v1/new_object", view_func=api.v1.new_object)
     app.add_url_rule(rule="/api/v1/new_objectgroup", view_func=api.v1.new_object_group)
+    app.add_url_rule(rule="/api/v1/set_object", view_func=api.v1.set_object)
     app.run(host=host, port=port)
 
 
